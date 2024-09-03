@@ -1,0 +1,181 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# FastAPI and Python-specific ignores
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.env
+*.env.*.local
+secrets.env
+
+# PyInstaller
+# Usually these files are written by a python script from a template
+# before PyInstaller builds the binary.
+# 
+# Example: pyinstaller --onefile myscript.spec
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+*.idea/
+
+# VSCode
+.vscode/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# JetBrains IDEs
+*.iml
+*.iws
+.idea/
+*.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.BIN/
+
+# Anaconda environments
+*.conda
+*.ipynb
+*.spacy
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Local virtualenv
+.venv/
+env/
+venv/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Flask instance folder
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+
+# mkdocs documentation
+/site
+
+# End of line normalization / handling
+*.sh.eol
+*.bat.eol
+*.cmd.eol
+*.ps1.eol
+
+# fastapi-specific
+*.sqlite3
+*.sqlite3-journal
+fastapi.sqlite3
+
+# Serverless Framework files
+.serverless/
+.lambda/
+
+# Other
+*.pkl
+*.pyo
+*.pyd
+*.pdb
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# dot files
+*.swp
+*.swo
+
+# Docker
+**/docker-compose.override.yml
+Dockerfile
+docker-compose.yml
+
