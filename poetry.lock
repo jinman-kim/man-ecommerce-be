@@ -66,6 +66,17 @@ tests = ["cloudpickle", "hypothesis", "mypy (>=1.11.1)", "pympler", "pytest (>=4
 tests-mypy = ["mypy (>=1.11.1)", "pytest-mypy-plugins"]
 
 [[package]]
+name = "certifi"
+version = "2024.8.30"
+description = "Python package for providing Mozilla's CA Bundle."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "certifi-2024.8.30-py3-none-any.whl", hash = "sha256:922820b53db7a7257ffbda3f597266d435245903d80737e34f8a45ff3e3230d8"},
+    {file = "certifi-2024.8.30.tar.gz", hash = "sha256:bec941d2aa8195e248a60b31ff9f0558284cf01a52591ceda73ea9afffd69fd9"},
+]
+
+[[package]]
 name = "click"
 version = "8.1.7"
 description = "Composable command line interface toolkit"
@@ -107,6 +118,47 @@ six = ">=1.9.0"
 [package.extras]
 gmpy = ["gmpy"]
 gmpy2 = ["gmpy2"]
+
+[[package]]
+name = "elastic-transport"
+version = "8.15.0"
+description = "Transport classes and utilities shared among Python Elastic client libraries"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "elastic_transport-8.15.0-py3-none-any.whl", hash = "sha256:d7080d1dada2b4eee69e7574f9c17a76b42f2895eff428e562f94b0360e158c0"},
+    {file = "elastic_transport-8.15.0.tar.gz", hash = "sha256:85d62558f9baafb0868c801233a59b235e61d7b4804c28c2fadaa866b6766233"},
+]
+
+[package.dependencies]
+certifi = "*"
+urllib3 = ">=1.26.2,<3"
+
+[package.extras]
+develop = ["aiohttp", "furo", "httpx", "opentelemetry-api", "opentelemetry-sdk", "orjson", "pytest", "pytest-asyncio", "pytest-cov", "pytest-httpserver", "pytest-mock", "requests", "respx", "sphinx (>2)", "sphinx-autodoc-typehints", "trustme"]
+
+[[package]]
+name = "elasticsearch"
+version = "8.15.0"
+description = "Python client for Elasticsearch"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "elasticsearch-8.15.0-py3-none-any.whl", hash = "sha256:7ec4d0771b8f6f76c6331e61b408261f9307264735ec7f2539f580824faaafe3"},
+    {file = "elasticsearch-8.15.0.tar.gz", hash = "sha256:d4702b4fa698ef154c6f1187988192343fb5505aee97fc4450a6d20df1683f35"},
+]
+
+[package.dependencies]
+elastic-transport = ">=8.13,<9"
+
+[package.extras]
+async = ["aiohttp (>=3,<4)"]
+dev = ["aiohttp", "black", "build", "coverage", "isort", "jinja2", "mapbox-vector-tile", "nox", "numpy", "orjson", "pandas", "pyarrow", "pytest", "pytest-asyncio", "pytest-cov", "python-dateutil", "pyyaml (>=5.4)", "requests (>=2,<3)", "simsimd", "twine", "unasync"]
+docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-rtd-theme"]
+orjson = ["orjson (>=3)"]
+pyarrow = ["pyarrow (>=1)"]
+requests = ["requests (>=2.4.0,!=2.32.2,<3.0.0)"]
+vectorstore-mmr = ["numpy (>=1)", "simsimd (>=3)"]
 
 [[package]]
 name = "fastapi"
@@ -221,6 +273,20 @@ files = [
     {file = "iniconfig-2.0.0-py3-none-any.whl", hash = "sha256:b6a85871a79d2e3b22d2d1b94ac2824226a63c6b741c88f7ae975f18b6778374"},
     {file = "iniconfig-2.0.0.tar.gz", hash = "sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3"},
 ]
+
+[[package]]
+name = "kafka-python"
+version = "2.0.2"
+description = "Pure Python client for Apache Kafka"
+optional = false
+python-versions = "*"
+files = [
+    {file = "kafka-python-2.0.2.tar.gz", hash = "sha256:04dfe7fea2b63726cd6f3e79a2d86e709d608d74406638c5da33a01d45a9d7e3"},
+    {file = "kafka_python-2.0.2-py2.py3-none-any.whl", hash = "sha256:2d92418c7cb1c298fa6c7f0fb3519b520d0d7526ac6cb7ae2a4fc65a51a94b6e"},
+]
+
+[package.extras]
+crc32c = ["crc32c"]
 
 [[package]]
 name = "mako"
@@ -618,6 +684,23 @@ files = [
 ]
 
 [[package]]
+name = "urllib3"
+version = "2.2.2"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "urllib3-2.2.2-py3-none-any.whl", hash = "sha256:a448b2f64d686155468037e1ace9f2d2199776e17f0a46610480d311f73e3472"},
+    {file = "urllib3-2.2.2.tar.gz", hash = "sha256:dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"},
+]
+
+[package.extras]
+brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
+h2 = ["h2 (>=4,<5)"]
+socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
+zstd = ["zstandard (>=0.18.0)"]
+
+[[package]]
 name = "uvicorn"
 version = "0.15.0"
 description = "The lightning-fast ASGI server."
@@ -639,4 +722,4 @@ standard = ["PyYAML (>=5.1)", "colorama (>=0.4)", "httptools (==0.2.*)", "python
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "cdc217c403a0588de52fd1c8fba881aa8cb50ad63b5bb22b7bad1ad71a4ebbb0"
+content-hash = "bd820ac39cdf62df7b4c85403cee973cda882d0feacfb50bbb2b370b75d06588"
