@@ -1,0 +1,29 @@
+version: "7.17"
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.11
+    container_name: es_container
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    networks:
+      - es_kibana_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.11
+    container_name: kibana_container
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - es_kibana_network
+
+networks:
+  es_kibana_network:
+    driver: bridge
