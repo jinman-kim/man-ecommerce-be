@@ -3,7 +3,7 @@
 from typing import Optional, List, Dict
 from elasticsearch import Elasticsearch
 import logging
-from schema.search import SearchRequest, SearchResponseItem
+from app.schema.search import SearchRequest, SearchResponseItem
 
 logger = logging.getLogger(__name__)
 

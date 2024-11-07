@@ -3,8 +3,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 from typing import List
-from services.crawl_service import CrawlService
-from dependencies import get_crawl_service  # 의존성 주입 함수 import
+from app.services.crawl_service import CrawlService
+from app.dependencies import get_crawl_service  # 의존성 주입 함수 import
 import logging
 
 router = APIRouter()

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-import models 
-from schema import schemas
+from app import models 
+from app.schema import schemas
 
 def create_item(db: Session, item_in: schemas.ItemCreate, user_id: int):
     item = models.Item(**item_in.dict(), owner_id=user_id)

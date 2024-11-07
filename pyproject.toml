@@ -4,6 +4,11 @@ version = "0.1.0"
 description = "An e-commerce backend using FastAPI"
 authors = ["Your Name <you@example.com>"]
 
+
+packages = [
+    { include = "app" }
+]
+
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = "^0.68.0"
@@ -22,6 +27,9 @@ openpyxl = "^3.1.5"
 requests = "^2.32.3"
 six = "^1.16.0"
 kafka-python-ng = "^2.2.3"
+pytest-mock = "^3.14.0"
+pytest-cov = "^6.0.0"
+pytz = "^2024.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

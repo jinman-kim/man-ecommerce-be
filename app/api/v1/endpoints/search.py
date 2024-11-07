@@ -3,8 +3,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from elasticsearch import Elasticsearch
 from typing import Optional, List
-from schema.search import SearchRequest, SearchResponse
-from services.search_service import SearchService
+from app.schema.search import SearchRequest, SearchResponse
+from app.services.search_service import SearchService
 
 router = APIRouter(
     prefix="/search",
