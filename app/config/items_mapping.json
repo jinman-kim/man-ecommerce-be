@@ -1,0 +1,46 @@
+{
+  "mappings": {
+    "properties": {
+      "category": {
+        "type": "text"
+      },
+      "title": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "price": {
+        "type": "integer"
+      },
+
+      "location": {
+        "type": "keyword"
+      },
+      "link": {
+        "type": "keyword"
+      },
+      "src": {
+        "type": "keyword"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "subject": {
+        "type": "text"
+      },
+      "subject_suggest": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      }
+    }
+  }
+}

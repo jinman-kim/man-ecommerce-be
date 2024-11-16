@@ -20,7 +20,7 @@ def get_elasticsearch_client(host: str = "http://localhost:9200") -> Elasticsear
 
 # SearchService 의존성 주입
 def get_search_service(es: Elasticsearch = Depends(get_elasticsearch_client)) -> SearchService:
-    return SearchService(es)
+    return SearchService(es=es, index_name="items")
 
 @router.post("/", response_model=SearchResponse)
 def search_items(

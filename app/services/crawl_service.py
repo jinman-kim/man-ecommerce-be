@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from bs4 import BeautifulSoup
-from typing import List, Dict
+from typing import List, Dict, Any
 import time
 from elasticsearch import Elasticsearch, helpers
 import logging
@@ -51,12 +51,12 @@ class CrawlService:
         """
         return self.crawl_item(items_options)
     
-    def crawl_item(self, items_options: List[List[str]]) -> List[Dict]:
+    def crawl_item(self, items_options: List[Dict[str, Any]]) -> List[Dict]:
         """
         요청에 따라 번개장터에서 아이템을 크롤링합니다.
 
         Args:
-            items_options (List[List[str]]): 각 아이템의 옵션 리스트 [category, min_price, max_price, page_limit]
+            items_options (List[Dict[str, Any]]): 각 아이템의 옵션 딕셔너리 리스트
 
         Returns:
             List[Dict]: 크롤링된 데이터 리스트
@@ -64,25 +64,28 @@ class CrawlService:
         if not self.browser:
             raise Exception("Selenium WebDriver가 초기화되지 않았습니다. 먼저 init_selenium을 호출하세요.")
 
-        Category = []
-        Subject = []
-        Price = []
-        Date = []
-        Location = []
-        Link = []
-        Img_src = []
-        Status = []
+        # 데이터 수집 리스트 초기화
+        Datas = {
+            "category": [],
+            "title": [],
+            "price": [],
+            "registration_date": [],
+            "location": [],
+            "link": [],
+            "src": [],
+            "status": []
+        }
 
-        for itemname in items_options:
-            category, min_price, max_price, page_limit = itemname
+
+        for item_option in items_options:
+            category = item_option["category"]
+            min_price = int(item_option["min_price"])
+            max_price = int(item_option["max_price"])
+            page_limit = int(item_option["page_limit"])
             page = 1
 
-            while True:
-                if page > int(page_limit):
-                    break
-
-                # 가격 범위에 따른 검색 URL 생성
-                url = f"https://m.bunjang.co.kr/search/products?order=price_asc&page={page}&q={category}"
+            while page <= page_limit:
+                url = f"https://m.bunjang.co.kr/search/products?order=date&page={page}&q={category}"
                 self.browser.get(url)
                 logger.info(f"크롤링 중: 카테고리={category}, 페이지={page}")
                 time.sleep(3)  # 페이지 로딩 대기
@@ -99,56 +102,56 @@ class CrawlService:
                     children = list(aTag.children)
 
                     try:
-                        # 0: 사진, 1: 이름, 가격, 시간, 2: 주소
+                        # 데이터 추출
                         img_tag = children[0].find('img')
-                        Img_src.append(img_tag['src'] if img_tag else 'None')
+                        src = img_tag['src'] if img_tag else 'None'
                         status = '판매중'
                         for img in children[0].find_all('img'):
                             if img.get('alt') == '판매 완료':
                                 status = '판매완료'
                                 break
-                        Status.append(status)
 
                         info = children[1].get_text(separator=';;;').split(';;;')
                         location = children[2].get_text()
 
-                        Category.append(category)
-                        Subject.append(info[0] if len(info) > 0 else 'None')
-                        Price.append(info[1] if len(info) > 1 else 'None')
-                        Date.append(info[2] if len(info) > 2 else 'None')
-                        Location.append(location if location else 'None')
-                        Link.append(f"https://m.bunjang.co.kr{aTag.get('href', '')}")
+                        title = info[0] if len(info) > 0 else 'None'
+                        price = info[1] if len(info) > 1 else 'None'
+                        date = info[2] if len(info) > 2 else 'None'
+
+                        # 데이터 수집
+                        Datas["category"].append(category)
+                        Datas["title"].append(title)
+                        Datas["price"].append(price)
+                        Datas["registration_date"].append(date)
+                        Datas["location"].append(location if location else 'None')
+                        Datas["link"].append(f"https://m.bunjang.co.kr{aTag.get('href', '')}")
+                        Datas["src"].append(src)
+                        Datas["status"].append(status)
                     except Exception as e:
                         logger.error(f"데이터 추출 오류: {e}")
-                        Category.append(category)
-                        Subject.append('None')
-                        Price.append('None')
-                        Date.append('None')
-                        Location.append('None')
-                        Link.append('None')
-                        Img_src.append('None')
-                        Status.append('None')
+                        # 누락된 데이터라도 기본값으로 추가
+                        Datas["category"].append(category)
+                        Datas["title"].append('None')
+                        Datas["price"].append('None')
+                        Datas["registration_date"].append('None')
+                        Datas["location"].append('None')
+                        Datas["link"].append('None')
+                        Datas["src"].append('None')
+                        Datas["status"].append('None')
                         continue
-
                 page += 1
 
-        # 데이터프레임 생성 및 전처리
-        Datas = {
-            "category": Category,
-            "title": Subject,  # "제목"에서 변경
-            "price": Price,
-            "registration_date": Date,  # "등록일시"에서 변경
-            "location": Location,  # "위치"에서 변경
-            "link": Link,
-            "src": Img_src,
-            "status": Status  # "상태"에서 변경
-        }
 
         df = pd.DataFrame(Datas)
         df.drop_duplicates(subset=['src'], inplace=True)
         df = df[df['status'] != '판매완료']
         df = df[df['price'] != '연락요망']
-        df['price'] = df['price'].str.replace(';', '').str.replace(',', '').astype(int)
+
+        try:
+            df['price'] = df['price'].str.replace(';', '').str.replace(',', '').astype(int)
+        except ValueError as ve:
+            logger.error(f"가격 변환 오류: {ve}")
+            df['price'] = pd.to_numeric(df['price'].str.replace(';', '').str.replace(',', ''), errors='coerce')
 
         # 날짜 변환 함수
         def date_shifter(df):
@@ -164,24 +167,29 @@ class CrawlService:
             return df
 
         df = date_shifter(df)
+        # 가격 필터 적용
+        filtered_dfs = []
+        for item_option in items_options:
+            category = item_option["category"]
+            min_price = int(item_option["min_price"])
+            max_price = int(item_option["max_price"])
 
-        # 가격 필터 함수 (필요에 맞게 수정)
-        def price_filter(df, _info):
-            category, min_price, max_price, _ = _info
             df_filtered = df[
                 (df['category'] == category) &
-                (df['price'].between(int(min_price), int(max_price)))
+                (df['price'].between(min_price, max_price))
             ].reset_index(drop=True)
-            return df_filtered.sort_values('price')
 
-        df_concat = pd.concat([price_filter(df, opt) for opt in items_options])
+            filtered_dfs.append(df_filtered)
+
+        df_concat = pd.concat(filtered_dfs, ignore_index=True)
+        logger.info(f"필터링 및 정렬 후 데이터: {len(df_concat)}")
 
         # 결과를 딕셔너리 리스트로 반환
         result = df_concat.to_dict(orient='records')
 
         return result
 
-    def save_item(self, data: List[Dict], index_name: str = "bunjang"):
+    def save_item(self, data: List[Dict], index_name: str = "items"):
         """
         크롤링한 데이터를 Elasticsearch에 저장합니다.
 
@@ -199,6 +207,52 @@ class CrawlService:
             self.es.indices.create(index=index_name)
             logger.info(f"Elasticsearch 인덱스 '{index_name}' 생성 완료")
 
+        # 중복 데이터 검색을 위한 link와 src 리스트 생성
+        links = [item['link'] for item in data]
+        srcs = [item['src'] for item in data]
+        # 중복 문서 검색 (link 또는 src가 일치하는 문서)
+        search_query = {
+            "query": {
+                "bool": {
+                    "should": [
+                        {"terms": {"link": links}},
+                        {"terms": {"src": srcs}}
+                    ],
+                    "minimum_should_match": 1
+                }
+            },
+            "_source": False  # 소스 필드를 가져올 필요 없으므로 비활성화
+        }
+
+        try:
+            response = self.es.search(index=index_name, body=search_query, size=10000)  # size는 최대 10000까지
+            hits = response['hits']['hits']
+            if hits:
+                # 삭제할 문서 ID 리스트 생성
+                delete_ids = [hit['_id'] for hit in hits]
+                logger.info(f"삭제할 중복 문서 수: {len(delete_ids)}")
+
+                # Bulk 삭제 요청 준비
+                delete_actions = [
+                    {
+                        "_op_type": "delete",
+                        "_index": index_name,
+                        "_id": doc_id
+                    }
+                    for doc_id in delete_ids
+                ]
+
+                # Bulk 삭제 실행
+                helpers.bulk(self.es, delete_actions)
+                logger.info(f"중복 문서 삭제 완료: {len(delete_ids)}개")
+            else:
+                logger.info("삭제할 중복 문서가 없습니다.")
+
+        except Exception as e:
+            logger.error(f"중복 문서 검색 또는 삭제 중 오류 발생: {e}")
+            return {"status": "error", "message": f"중복 문서 처리 중 오류 발생: {e}"}
+
+    
         # 데이터 삽입
         actions = [
             {
@@ -207,6 +261,8 @@ class CrawlService:
             }
             for item in data
         ]
+
+        logger.info(f"물건 {len(actions)}개 저장 시도")
 
         helpers.bulk(self.es, actions)
         logger.info(f"데이터가 Elasticsearch 인덱스 '{index_name}'에 저장되었습니다.")

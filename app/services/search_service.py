@@ -28,7 +28,7 @@ class SearchService:
                 "bool": {
                     "must": {
                         "match": {
-                            "제목": {
+                            "category": {
                                 "query": request.query,
                                 "operator": "and"  # 정확한 매칭을 원할 경우 "and" 사용
                             }
@@ -71,6 +71,7 @@ class SearchService:
                 body["from"] = from_
 
             # Elasticsearch 검색 요청
+            logger.info(f"es query : {body}")
             response = self.es.search(
                 index=self.index_name,
                 body=body

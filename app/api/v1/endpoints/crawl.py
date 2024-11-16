@@ -23,13 +23,18 @@ class CrawlRequest(BaseModel):
 @router.post("/", summary="Bunjang 크롤링 실행")
 def crawl_endpoint(request: CrawlRequest, crawl_service: CrawlService = Depends(get_crawl_service)):
     items_options = [
-        [item.category, item.min_price, item.max_price, item.page_limit]
+        {
+            "category": item.category,
+            "min_price": item.min_price,
+            "max_price": item.max_price,
+            "page_limit": item.page_limit
+        }
         for item in request.items_options
     ]
     
     try:
         result = crawl_service.run_scraper(items_options=items_options, num_workers=8)
-        status = crawl_service.save_item(result)
+        status = crawl_service.save_item(result, index_name='items')
         return status
     except Exception as e:
         logger.error(f"Crawl 실패: {e}")
