@@ -4,18 +4,32 @@ version = "0.1.0"
 description = "An e-commerce backend using FastAPI"
 authors = ["Your Name <you@example.com>"]
 
+
+packages = [
+    { include = "app" }
+]
+
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.12"
 fastapi = "^0.68.0"
 uvicorn = "^0.15.0"
 sqlalchemy = "^1.4.22"
 pydantic = "^1.8.2"
 alembic = "^1.6.5"
-python-jose = "^3.2.0"
+python-jose = "^3.3.0"
 passlib = "^1.7.4"
 pytest = "^6.2.4"
-kafka-python = "^2.0.2"
 elasticsearch = "^8.15.0"
+beautifulsoup4 = "^4.12.3"
+selenium = "^4.25.0"
+pandas = "^2.2.3"
+openpyxl = "^3.1.5"
+requests = "^2.32.3"
+six = "^1.16.0"
+kafka-python-ng = "^2.2.3"
+pytest-mock = "^3.14.0"
+pytest-cov = "^6.0.0"
+pytz = "^2024.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

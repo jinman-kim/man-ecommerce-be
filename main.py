@@ -1,14 +1,14 @@
 # app/main.py
 
 from fastapi import FastAPI
-from api.v1 import api_router
-from core.config import settings
-from db.init_db import init_db
-from db.session import engine
-from services.es_service import EsService
-from services.kafka_service import KafkaService
-from services.crawl_service import CrawlService
-from services.service_container import service_container
+from app.api.v1 import api_router
+from app.core.config import settings
+from app.db.init_db import init_db
+from app.db.session import engine
+from app.services.es_service import EsService
+from app.services.kafka_service import KafkaService
+from app.services.crawl_service import CrawlService
+from app.services.service_container import service_container
 import logging
 
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
