@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app import models
-from app.schema import schemas
+from app.schemas import schemas
 
 class TestService:
     def __init__(self, db: Session):

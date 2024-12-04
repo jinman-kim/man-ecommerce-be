@@ -1,16 +1,23 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app import models
-from app.schema import schemas
-from app.core.security import create_access_token, verify_password
-from app.db.session import get_db
+# api/v1/endpoints/auth.py
+from fastapi import APIRouter, Depends, HTTPException, status
+from app.schemas.user import UserCreate, UserLogin, Token, UserDelete
+from app.services.auth import create_user, login_user, delete_user
+from app.utils.security import get_current_user
 
 router = APIRouter()
 
-@router.post("/login", response_model=schemas.Token)
-def login(form_data: schemas.UserLogin, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == form_data.email).first()
-    if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    access_token = create_access_token(subject=user.id)
-    return {"access_token": access_token, "token_type": "bearer"}
+@router.post("/user/signup", status_code=status.HTTP_201_CREATED)
+async def signup(user: UserCreate):
+    return await create_user(user)
+
+@router.delete("/user/delete", status_code=status.HTTP_200_OK)
+async def delete_user_endpoint(user: UserDelete):
+    return await delete_user(user)
+
+@router.post("/user/login", response_model=Token)
+async def login(user: UserLogin):
+    return await login_user(user)
+
+@router.get("/protected")
+async def protected_route(current_user: str = Depends(get_current_user)):
+    return {"message": f"Hello, {current_user}"}

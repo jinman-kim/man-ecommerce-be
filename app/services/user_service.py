@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app import models
-from app.schema import schemas
+from app.schemas import schemas
 from app.core.security import get_password_hash
 
 def create_user(db: Session, user_in: schemas.UserCreate):

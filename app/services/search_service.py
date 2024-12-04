@@ -3,7 +3,7 @@
 from typing import Optional, List, Dict
 from elasticsearch import Elasticsearch
 import logging
-from app.schema.search import SearchRequest, SearchResponseItem
+from app.schemas.search import SearchRequest, SearchResponseItem
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +26,10 @@ class SearchService:
             # Elasticsearch 쿼리 구성
             es_query = {
                 "bool": {
-                    "must": {
+                    "should": {
                         "match": {
-                            "category": {
+                            "title": {
                                 "query": request.query,
-                                "operator": "and"  # 정확한 매칭을 원할 경우 "and" 사용
                             }
                         }
                     },
@@ -59,16 +58,15 @@ class SearchService:
                 "query": es_query,
                 "sort": [sort_option],
                 "size": request.size,
-                "_source": ["category", "제목", "price", "등록일시", "위치", "링크", "src", "상태"]  # 필요한 필드만 로드
             }
 
             # 페이지네이션 설정
-            if request.search_after:
-                body["search_after"] = request.search_after
-            else:
-                # 페이지 번호 기반 페이지네이션 (from/size 사용)
-                from_ = (request.page - 1) * request.size
-                body["from"] = from_
+            # if request.search_after:
+            #     body["search_after"] = request.search_after
+            # else:
+            #     # 페이지 번호 기반 페이지네이션 (from/size 사용)
+            #     from_ = (request.page - 1) * request.size
+            #     body["from"] = from_
 
             # Elasticsearch 검색 요청
             logger.info(f"es query : {body}")
