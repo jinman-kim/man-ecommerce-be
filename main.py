@@ -1,10 +1,14 @@
 # app/main.py
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.v1 import api_router
 from app.core.config import settings
 from app.db.init_db import init_db
 from app.db.session import engine
+from app.db.database import database
+
 from app.services.es_service import EsService
 from app.services.kafka_service import KafkaService
 from app.services.crawl_service import CrawlService
@@ -13,13 +17,29 @@ import logging
 
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
+app = FastAPI()
+
+# CORS 허용할 도메인 리스트
+origins = [
+    "http://localhost:3000",  # React 개발 서버 주소
+    # 다른 도메인이 필요하다면 추가
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # 허용할 도메인
+    allow_credentials=True,
+    allow_methods=["*"],    # 허용할 HTTP 메서드
+    allow_headers=["*"],    # 허용할 HTTP 헤더
+)
+
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
-def on_startup():
-    init_db(engine)
+async def on_startup():
+    await database.connect()
     
     # Elasticsearch 서비스 초기화 및 인덱스 생성
     try:

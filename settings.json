@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "/home/user/ecommerce/.venv/bin/python", // Linux/macOS
+  "python.autoComplete.extraPaths": [
+    "./.venv/lib/python3.12/site-packages" // Python 버전에 맞게 경로 수정
+  ]
+}
